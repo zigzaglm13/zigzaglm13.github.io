@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Music Downloader</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Music Downloader</h1>
+    <p>Enter the URL of your song to download it in MP3 format</p>
+
+    <div class="input-group">
+      <input type="text" id="songUrl" placeholder="Paste Spotify song URL here..." />
+      <button id="downloadButton">Download</button>
+    </div>
+
+    <div id="statusMessage" class="status"></div>
+
+    <div id="downloadLink" class="download-link" style="display: none;">
+      <a href="" target="_blank" download>Click here to download your song</a>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
