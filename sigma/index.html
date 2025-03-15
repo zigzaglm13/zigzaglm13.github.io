@@ -3,80 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Download Music</title>
+    <title>SoundCloud Track Downloader</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             padding: 20px;
-            background-color: #f8f9fa;
         }
-
-        h1 {
-            color: #333;
-        }
-
         input, button {
             padding: 10px;
             font-size: 16px;
         }
-
         input {
             width: 300px;
             margin-right: 10px;
         }
-
         button {
             cursor: pointer;
             background-color: #007bff;
             color: white;
             border: none;
         }
-
         button:hover {
             background-color: #0056b3;
         }
-
-        .download-btn {
-            display: none;
+        .track-info {
             margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <h1>Download Your Song</h1>
-    <p>Paste the URL of your song below (must be a direct link to an audio file):</p>
 
+    <h1>SoundCloud Track Downloader</h1>
+    <p>Paste a SoundCloud track URL below to get information:</p>
+    
     <!-- URL Input Form -->
-    <input type="text" id="urlInput" placeholder="Paste your song link here">
-    <button onclick="processLink()">Download</button>
+    <input type="text" id="urlInput" placeholder="Paste SoundCloud URL here" />
+    <button onclick="fetchTrackInfo()">Get Track Info</button>
 
-    <!-- Download Button (hidden by default) -->
-    <div id="downloadBtn" class="download-btn">
-        <a href="" id="downloadLink" download>
-            <button>Download Song</button>
-        </a>
-    </div>
+    <div id="trackInfo" class="track-info"></div>
 
     <script>
-        function processLink() {
-            const url = document.getElementById("urlInput").value;
+        function fetchTrackInfo() {
+            const url = document.getElementById('urlInput').value;
 
-            if (isValidAudioLink(url)) {
-                // If the URL is valid, display the download button
-                const downloadBtn = document.getElementById("downloadBtn");
-                const downloadLink = document.getElementById("downloadLink");
-
-                downloadLink.href = url;
-                downloadBtn.style.display = "block";
-            } else {
-                alert("Please enter a valid direct audio file link (e.g., .mp3, .ogg).");
+            if (!url) {
+                alert("Please enter a valid SoundCloud URL.");
+                return;
             }
-        }
 
-        function isValidAudioLink(url) {
-            // Basic check to see if the link ends with an audio file extension
-            const audioExtensions = ['.mp3', '.wav', '.ogg', '.flac', '.aac', '.m4a'];
-            return audioExtensions.some(ext => url.toLowerCase().endsWith(ext));
+            // Extract track ID from the SoundCloud URL (this is a simple approach)
+            const trackIdMatch = url.match(/soundcloud\.com\/([^/]+)\/([^/]+)/);
+            if (trackIdMatch) {
+                const artist = trackIdMatch[1];
+                const track = trackIdMatch[2];
+
+                // Construct SoundCloud API URL
+                const apiUrl = `https://api.soundcloud.com/resolve?url=https://soundcloud.com/${artist}/${track}&client_id=YOUR_CLIENT_ID_HERE`;
+
+                fetch(apiUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.stream_url) {
+                            const trackInfo = `
+                                <h3>${data.title}</h3>
+                                <p>Artist: ${data.user.username}</p>
+                                <audio controls>
+                                    <source src="${data.stream_url}?client_id=YOUR_CLIENT_ID_HERE" type="audio/mp3">
+                                    Your browser does not support the audio element.
+                                </audio>
+                                <p><a href="${data.permalink_url}" target="_blank">Listen on SoundCloud</a></p>
+                            `;
+                            document.getElementById('trackInfo').innerHTML = trackInfo;
+                        } else {
+                            alert("This track cannot be streamed.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error fetching track info:", error);
+                        alert("There was an error fetching track details.");
+                    });
+            } else {
+                alert("Please enter a valid SoundCloud URL.");
+            }
         }
     </script>
 </body>
