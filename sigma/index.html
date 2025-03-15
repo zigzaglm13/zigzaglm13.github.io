@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SoundCloud Track Info</title>
+    <title>SoundCloud Track Downloader</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -33,17 +33,17 @@
 </head>
 <body>
 
-    <h1>SoundCloud Track Info</h1>
-    <p>Paste a SoundCloud track URL below to get information:</p>
+    <h1>SoundCloud Track Downloader</h1>
+    <p>Paste a SoundCloud track URL below to download it:</p>
     
     <!-- URL Input Form -->
     <input type="text" id="urlInput" placeholder="Paste SoundCloud URL here" />
-    <button onclick="fetchTrackInfo()">Get Track Info</button>
+    <button onclick="downloadTrack()">Download Track</button>
 
     <div id="trackInfo" class="track-info"></div>
 
     <script>
-        function fetchTrackInfo() {
+        function downloadTrack() {
             const url = document.getElementById('urlInput').value;
 
             if (!url) {
@@ -51,24 +51,24 @@
                 return;
             }
 
-            // Regex to match standard SoundCloud track URLs
-            const trackIdMatch = url.match(/soundcloud\.com\/([^/]+)\/([^/]+)/);
-            if (trackIdMatch) {
-                const artist = trackIdMatch[1];
-                const track = trackIdMatch[2];
+            // Use a public API to convert SoundCloud URL to an MP3 download link (hypothetical service)
+            const apiUrl = `https://some-third-party-api.com/convert?url=${encodeURIComponent(url)}`;
 
-                // Simply construct the link to the track on SoundCloud
-                const trackUrl = `https://soundcloud.com/${artist}/${track}`;
-
-                const trackInfo = `
-                    <h3>Track: ${track}</h3>
-                    <p>Artist: ${artist}</p>
-                    <p><a href="${trackUrl}" target="_blank">Listen on SoundCloud</a></p>
-                `;
-                document.getElementById('trackInfo').innerHTML = trackInfo;
-            } else {
-                alert("Please enter a valid SoundCloud URL.");
-            }
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.download_url) {
+                        // Display a download link to the user
+                        const downloadLink = `<a href="${data.download_url}" download>Click here to download the track</a>`;
+                        document.getElementById('trackInfo').innerHTML = downloadLink;
+                    } else {
+                        alert("Unable to fetch download link. The track may not be downloadable.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching download link:", error);
+                    alert("There was an error fetching the download link.");
+                });
         }
     </script>
 </body>
