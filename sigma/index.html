@@ -51,24 +51,26 @@
                 return;
             }
 
-            // Use a public API to convert SoundCloud URL to an MP3 download link (hypothetical service)
-            const apiUrl = `https://some-third-party-api.com/convert?url=${encodeURIComponent(url)}`;
+            // Regex to match standard SoundCloud track URLs
+            const trackIdMatch = url.match(/soundcloud\.com\/([^/]+)\/([^/]+)/);
+            if (trackIdMatch) {
+                const artist = trackIdMatch[1];
+                const track = trackIdMatch[2];
 
-            fetch(apiUrl)
-                .then(response => response.json())
-                .then(data => {
-                    if (data && data.download_url) {
-                        // Display a download link to the user
-                        const downloadLink = `<a href="${data.download_url}" download>Click here to download the track</a>`;
-                        document.getElementById('trackInfo').innerHTML = downloadLink;
-                    } else {
-                        alert("Unable to fetch download link. The track may not be downloadable.");
-                    }
-                })
-                .catch(error => {
-                    console.error("Error fetching download link:", error);
-                    alert("There was an error fetching the download link.");
-                });
+                // Check if the track is available for download (this is just a simple check)
+                // The real way to check if a track can be downloaded would require SoundCloud's API, which isn't being used here.
+                const trackUrl = `https://soundcloud.com/${artist}/${track}`;
+
+                // Display the SoundCloud page and suggest to the user to check if it's downloadable
+                const trackInfo = `
+                    <h3>Track: ${track}</h3>
+                    <p>Artist: ${artist}</p>
+                    <p><a href="${trackUrl}" target="_blank">Click here to go to SoundCloud and see if it's available for download</a></p>
+                `;
+                document.getElementById('trackInfo').innerHTML = trackInfo;
+            } else {
+                alert("Please enter a valid SoundCloud URL.");
+            }
         }
     </script>
 </body>
