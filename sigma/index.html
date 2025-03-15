@@ -51,14 +51,15 @@
                 return;
             }
 
-            // Extract track ID from the SoundCloud URL (this is a simple approach)
+            // Regex to match standard SoundCloud track URLs
             const trackIdMatch = url.match(/soundcloud\.com\/([^/]+)\/([^/]+)/);
             if (trackIdMatch) {
                 const artist = trackIdMatch[1];
                 const track = trackIdMatch[2];
 
-                // Construct SoundCloud API URL
-                const apiUrl = `https://api.soundcloud.com/resolve?url=https://soundcloud.com/${artist}/${track}&client_id=YOUR_CLIENT_ID_HERE`;
+                // Replace with your actual SoundCloud API Client ID
+                const clientId = 'YOUR_CLIENT_ID_HERE'; // Replace with your actual Client ID
+                const apiUrl = `https://api.soundcloud.com/resolve?url=https://soundcloud.com/${artist}/${track}&client_id=${clientId}`;
 
                 fetch(apiUrl)
                     .then(response => response.json())
@@ -68,14 +69,21 @@
                                 <h3>${data.title}</h3>
                                 <p>Artist: ${data.user.username}</p>
                                 <audio controls>
-                                    <source src="${data.stream_url}?client_id=YOUR_CLIENT_ID_HERE" type="audio/mp3">
+                                    <source src="${data.stream_url}?client_id=${clientId}" type="audio/mp3">
                                     Your browser does not support the audio element.
                                 </audio>
                                 <p><a href="${data.permalink_url}" target="_blank">Listen on SoundCloud</a></p>
                             `;
                             document.getElementById('trackInfo').innerHTML = trackInfo;
                         } else {
-                            alert("This track cannot be streamed.");
+                            // Handle case when stream_url is not available
+                            const trackInfo = `
+                                <h3>${data.title}</h3>
+                                <p>Artist: ${data.user.username}</p>
+                                <p>Unfortunately, this track cannot be streamed through the API.</p>
+                                <p><a href="${data.permalink_url}" target="_blank">Listen on SoundCloud</a></p>
+                            `;
+                            document.getElementById('trackInfo').innerHTML = trackInfo;
                         }
                     })
                     .catch(error => {
