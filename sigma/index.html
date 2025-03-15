@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download Music</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        input, button {
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        input {
+            width: 300px;
+            margin-right: 10px;
+        }
+
+        button {
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .download-btn {
+            display: none;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Download Your Song</h1>
+    <p>Paste the URL of your song below (must be a direct link to an audio file):</p>
+
+    <!-- URL Input Form -->
+    <input type="text" id="urlInput" placeholder="Paste your song link here">
+    <button onclick="processLink()">Download</button>
+
+    <!-- Download Button (hidden by default) -->
+    <div id="downloadBtn" class="download-btn">
+        <a href="" id="downloadLink" download>
+            <button>Download Song</button>
+        </a>
+    </div>
+
+    <script>
+        function processLink() {
+            const url = document.getElementById("urlInput").value;
+
+            if (isValidAudioLink(url)) {
+                // If the URL is valid, display the download button
+                const downloadBtn = document.getElementById("downloadBtn");
+                const downloadLink = document.getElementById("downloadLink");
+
+                downloadLink.href = url;
+                downloadBtn.style.display = "block";
+            } else {
+                alert("Please enter a valid direct audio file link (e.g., .mp3, .ogg).");
+            }
+        }
+
+        function isValidAudioLink(url) {
+            // Basic check to see if the link ends with an audio file extension
+            const audioExtensions = ['.mp3', '.wav', '.ogg', '.flac', '.aac', '.m4a'];
+            return audioExtensions.some(ext => url.toLowerCase().endsWith(ext));
+        }
+    </script>
+</body>
+</html>
