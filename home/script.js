@@ -8,15 +8,27 @@ document.getElementById('downloadButton').addEventListener('click', function () 
     return;
   }
 
-  // Here you can add API call logic for actually processing the song download
-  // This is a mockup, and in a real app, you would send the song URL to the server to start the download process.
-
   statusMessage.textContent = 'Processing your request...';
 
-  // Mock download link (this should be dynamically generated via back-end logic)
-  setTimeout(function () {
-    statusMessage.textContent = ''; // Clear status message
-    downloadLink.style.display = 'block'; // Show the download link
-    downloadLink.querySelector('a').href = 'path_to_your_downloadable_song.mp3'; // Replace with actual song URL
-  }, 2000); // Simulating a delay for processing
+  // Send request to your back-end server (e.g., Heroku or AWS Lambda)
+  fetch('https://your-backend-server.com/api/download', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ url: songUrl }),
+  })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        downloadLink.style.display = 'block';
+        downloadLink.querySelector('a').href = data.downloadUrl;
+        statusMessage.textContent = 'Download ready!';
+      } else {
+        statusMessage.textContent = 'Failed to fetch the song.';
+      }
+    })
+    .catch(error => {
+      statusMessage.textContent = 'Error processing the request.';
+    });
 });
